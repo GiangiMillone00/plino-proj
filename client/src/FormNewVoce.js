@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./FormNewVoce.css";
 
-function FormNewVoce({ reloadData }) {
+function FormNewVoce({ addVoce }) {
   const [NewVoce, setNewVoce] = useState({
     id: "0",
     company: "",
@@ -19,7 +19,8 @@ function FormNewVoce({ reloadData }) {
     });
   };
 
-  const handleSubmitNewVoce = () => {
+  const handleSubmitNewVoce = (e) => {
+    e.preventDefault();
     if (
       NewVoce.company !== "" &&
       NewVoce.category !== "" &&
@@ -27,16 +28,15 @@ function FormNewVoce({ reloadData }) {
       NewVoce.model_name !== "" &&
       NewVoce.num_million_parameters !== ""
     ) {
-      fetch("http://localhost:8000/llm/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(NewVoce),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          reloadData();
-        })
-        .catch((error) => console.error("Error fetching data:", error));
+      addVoce(NewVoce);
+      setNewVoce({
+        id: "0",
+        company: "",
+        category: "",
+        release_date: "",
+        model_name: "",
+        num_million_parameters: "",
+      });
     } else {
       alert("Compilare tutti i campi");
     }
@@ -51,6 +51,7 @@ function FormNewVoce({ reloadData }) {
         id="txtCompanyNew"
         onChange={handleInputChange}
         name="company"
+        value={NewVoce.company}
       ></input>
       category:{" "}
       <input
@@ -58,6 +59,7 @@ function FormNewVoce({ reloadData }) {
         id="txtCategoryNew"
         onChange={handleInputChange}
         name="category"
+        value={NewVoce.category}
       ></input>
       release_date:{" "}
       <input
@@ -65,6 +67,7 @@ function FormNewVoce({ reloadData }) {
         id="txtReleaseDateNew"
         onChange={handleInputChange}
         name="release_date"
+        value={NewVoce.release_date}
       ></input>
       model_name:{" "}
       <input
@@ -72,6 +75,7 @@ function FormNewVoce({ reloadData }) {
         id="txtModelNameNew"
         onChange={handleInputChange}
         name="model_name"
+        value={NewVoce.model_name}
       ></input>
       num_million_parameters:
       <input
@@ -79,6 +83,7 @@ function FormNewVoce({ reloadData }) {
         id="txtNumMillParNew"
         onChange={handleInputChange}
         name="num_million_parameters"
+        value={NewVoce.num_million_parameters}
       ></input>
       <button type="submit" id="btnNewVoce">
         Aggiungi Voce

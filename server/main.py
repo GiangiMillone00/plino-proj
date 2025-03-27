@@ -8,11 +8,11 @@ from motor.motor_asyncio import (
 )
 from pydantic import BaseModel
 import csv, os
-from typing import Optional
 from fastapi.middleware.cors import CORSMiddleware
 from bson.objectid import ObjectId
 
 app = FastAPI()
+#add middleware to make api calls from client dev env
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:3000", "http://localhost:3001"],  # Only allow requests from React app
@@ -24,13 +24,6 @@ app.add_middleware(
 llms_collection: AsyncIOMotorCollection = AsyncIOMotorClient(
     "mongodb://root:example@mongodb:27017"
 )["plino"]["llms"]
-
-# Use an absolute path that works in Docker
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))  # Get current script's directory
-FILE_DIR = os.path.join(BASE_DIR, "..", "data")  # Move up and locate the 'data' directory
-
-# Resolve any symbolic links or relative paths
-FILE_DIR = os.path.realpath(FILE_DIR)
 
 @app.get("/")
 async def read_root():
@@ -52,13 +45,11 @@ async def create_llm(
     el: LLMObj = None):
 
     if el:
-        print("--> NOT NULL")
+        print("--> Input dati presente")
     else:
-        print("--> NULL")
+        print("--> Nessun input - prendo da csv")
 
-        #csv_path = "llms1.csv"
-
-        file_path = os.path.join(FILE_DIR, "llms.csv")
+        file_path = "/data/llms.csv"
         print(file_path)
 
         if not os.path.exists(file_path):
@@ -69,7 +60,7 @@ async def create_llm(
             spamreader = list(reader)
             headerreader = spamreader[0]
             chosen_row = random.choice(spamreader[1:])
-            el = LLMObj(id=0,company=chosen_row[0], category=chosen_row[1], release_date=chosen_row[2], model_name=chosen_row[3], num_million_parameters=chosen_row[4])
+            el = LLMObj(id="0",company=chosen_row[0], category=chosen_row[1], release_date=chosen_row[2], model_name=chosen_row[3], num_million_parameters=chosen_row[4])
 
     search_el = await llms_collection.find_one(
         {"company": el.company, "category": el.category, "release_date": el.release_date, "model_name": el.model_name, "num_million_parameters": el.num_million_parameters}
@@ -90,9 +81,7 @@ class GetLLMsResponseBody(BaseModel):
     response_model=GetLLMsResponseBody,
 )
 async def get_llms(fCompany: str = None, fCategory: str = None) -> GetLLMsResponseBody:
-    
     elems = []
-
     filter = {}
     if fCompany:
         filter["company"] = {"$regex": fCompany}

@@ -45,3 +45,22 @@
 .rightInput {
   width: 30%;
 }
+
+.divFiltri {
+  display: inline-block;
+  background-color: antiquewhite;
+  border-radius: 10%;
+  padding: 0 2rem 2rem 2rem;
+  margin-top: 1rem;
+}
+.divFiltri .input-group {
+  display: block;
+}
+
+button {
+  padding: 0.5rem;
+  text-transform: uppercase;
+  border-radius: 5%;
+  background-color: azure;
+  font-weight: bold;
+}
