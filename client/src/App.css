@@ -1,5 +1,6 @@
 .App {
   text-align: center;
+  display: inline-flex;
 }
 
 .App-logo {
@@ -35,4 +36,12 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.leftElenco {
+  width: 70%;
+}
+
+.rightInput {
+  width: 30%;
 }
